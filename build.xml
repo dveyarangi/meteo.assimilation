@@ -1,0 +1,75 @@
+<project name="Sample buildfile for java project" default="compile" basedir="../../">
+
+	<buildnumber file="src/main/resources/tao.build.number"/>
+	
+	<property name="project.home" value="." />
+	<property name="build.home" value="${project.home}/build" />
+	<property name="dist.home" value="${project.home}/dist" />
+	<property name="scripts.home" value="${project.home}/scripts" />
+	<property name="app.dist.home" value="${project.home}/dist/app" />
+	<property name="classes.home" value="${build.home}/classes" />
+	<property name="jar.path" value="${dist.home}/meteo-assimilation.jar" />
+	
+	<property name="lib.home" value="${project.home}/lib" />
+
+	<property name="src.home" value="${project.home}/src" />
+	<property name="res.home" value="${project.home}/src/main/resources" />
+	<property name="java.main" value="meteo.assimilation.TaoEngine" />
+	
+	<!-- classpath collection -->
+	<path id="classpath">
+		<fileset dir="${lib.home}" includes="*.jar"/>
+	</path>
+	
+	<target name="clean" >
+		<echo message="Cleaning previous build..." />
+		<delete dir="${build.home}"/>
+		<delete dir="${dist.home}"/>
+	</target>
+
+	<target name="compile">
+		<!-- prepare directory -->
+		<mkdir dir="${classes.home}" />
+
+		<!-- compile java files -->
+		<javac srcdir="${project.home}/src/main/java"
+		       destdir="${classes.home}"
+			   encoding="cp1255"
+		       debug="on"
+		       optimize="on"
+		       deprecation="on"
+			   target="1.7" 
+			   source="1.7"
+			   includeantruntime="false" >
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+
+
+	
+	<target name="jar" depends="compile">
+		<mkdir dir="${dist.home}" />
+		
+		<manifestclasspath property="jar.classspath" jarfile="${jar.path}">
+		    <classpath refid="classpath"/>
+	    </manifestclasspath>		
+		<delete file="${jar.path}" />
+		<jar jarfile="${jar.path}" basedir="${classes.home}" compress="true">
+			<fileset dir="${classes.home}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${res.home}" />
+			<manifest>
+				<attribute name="Main-Class" value="${java.main}"/>
+				<attribute name="Class-Path" value="${jar.classspath}"/>
+			</manifest>
+		</jar>
+	</target>
+		
+	<target name="application" depends="clean,jar">
+		<!-- copy configuration files -->
+
+		
+	</target>
+	
+</project>
