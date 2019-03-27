@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import meteo.util.Env;
 
 /**
  * Monitors a folder for arriving files and feeds fully arrived files to {@link #assimilator} 
@@ -60,7 +61,11 @@ public class FolderMonitor
 		this.fileQueue = new FileQueue();
 		
 		this.monitoredFolder = monitorCfg.getInputDir();
-		this.tempFolder = monitorCfg.getTempDir();
+		
+		this.tempFolder = monitorCfg.getTempDir() == null ? 
+				new File(Env.cachePath(monitoredFolder.getName())) : 
+				monitorCfg.getTempDir();
+				
 		this.doneFolder = monitorCfg.getDoneDir();
 		this.errorFolder = monitorCfg.getErrorDir();
 		
@@ -124,13 +129,12 @@ public class FolderMonitor
 		}
 
 		/////////////////////////////////////////////////////////////
-		// handle unreadibles:
-		handleErrors( errorFiles );
-
-		/////////////////////////////////////////////////////////////
 		// process the files:
 		assimilateFiles( readyFiles );
 
+		/////////////////////////////////////////////////////////////
+		// handle unreadibles:
+		handleErrors( errorFiles );
 		/////////////////////////////////////////////////////////////
 		// some auditing
 		long duration = System.currentTimeMillis() - now;
@@ -142,6 +146,8 @@ public class FolderMonitor
 	{
 		if(!monitoredFolder.exists()) // revalidate folder...
 			throw new RuntimeException("Missing folder " + monitoredFolder );	
+		if(!tempFolder.exists())
+			tempFolder.mkdirs();
 	}
 
 	/**

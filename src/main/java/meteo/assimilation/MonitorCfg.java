@@ -19,7 +19,7 @@ public class MonitorCfg
 	public File getInputDir() { return getDir(inputDir); }
 	public File getDoneDir()  { return doneDir == null ? null : getDir(doneDir); }
 	public File getErrorDir() { return errorDir == null ? null : getDir(errorDir); }
-	public File getTempDir()  { return getDir(tempDir); }
+	public File getTempDir()  { return tempDir == null ? null : getDir(tempDir); }
 	
 	
 	private File getDir(String folderName) 
