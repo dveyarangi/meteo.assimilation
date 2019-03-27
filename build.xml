@@ -1,6 +1,6 @@
 <project name="Sample buildfile for java project" default="compile" basedir="../../">
 
-	<buildnumber file="src/main/resources/tao.build.number"/>
+	<buildnumber file="src/main/resources/dao.build.number"/>
 	
 	<property name="project.home" value="." />
 	<property name="build.home" value="${project.home}/build" />
@@ -12,7 +12,7 @@
 	
 	<property name="lib.home" value="${project.home}/lib" />
 
-	<property name="src.home" value="${project.home}/src" />
+	<property name="src.home" value="${project.home}/src/main/java" />
 	<property name="res.home" value="${project.home}/src/main/resources" />
 	<property name="java.main" value="meteo.assimilation.TaoEngine" />
 	
@@ -32,7 +32,7 @@
 		<mkdir dir="${classes.home}" />
 
 		<!-- compile java files -->
-		<javac srcdir="${project.home}/src/main/java"
+		<javac srcdir="${src.home}"
 		       destdir="${classes.home}"
 			   encoding="cp1255"
 		       debug="on"
@@ -64,12 +64,6 @@
 				<attribute name="Class-Path" value="${jar.classspath}"/>
 			</manifest>
 		</jar>
-	</target>
-		
-	<target name="application" depends="clean,jar">
-		<!-- copy configuration files -->
-
-		
 	</target>
 	
 </project>

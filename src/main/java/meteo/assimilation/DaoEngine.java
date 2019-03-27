@@ -53,6 +53,11 @@ public class DaoEngine
 		//////////////////////////////////////////////////////////////
 		// load configuration
 		config = DaoCfg.loadConfig();
+		if( config == null )
+		{
+			log.error("Failed to load configuration");
+			System.exit(1);
+		}
 		
 		//////////////////////////////////////////////////////////////
 		// register main modules and create application dependencies graph
@@ -67,8 +72,9 @@ public class DaoEngine
 		
 		Runnable engineHeart = new Runnable() { @Override public void run()  { runEngine(); } };
 		new Thread(engineHeart, "tao-engine").start();
-
-		//runEngine( createMonitors ( createApplication ( loadConfig() ) ) );
+		
+		// stop main loop on kill signal
+		Runtime.getRuntime().addShutdownHook(new Thread( ()->stop() ));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +123,7 @@ public class DaoEngine
 		try {
 			listener = injector.getInstance(AssListener.class);
 		}
-		catch(ConfigurationException e) { log.debug("No assimilation listener registered.");}
+		catch(ConfigurationException e) { log.debug("No assimilation listener registered."); }
 		
 		
 		DaoCfg config = injector.getInstance( DaoCfg.class );

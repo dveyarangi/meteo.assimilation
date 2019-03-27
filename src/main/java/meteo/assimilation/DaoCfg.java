@@ -20,7 +20,7 @@ import meteo.util.JsonInterfaceAdapter;
 
 /**
  * Assimilator engine configuration object.
- * Some black magic is used here to inject the configuration object fields into the 
+ * Some black magic is used here to inject the configuration objects into the 
  * dependent modules
  */
 @Singleton
@@ -32,6 +32,7 @@ public class DaoCfg extends AbstractModule
 	@Override
 	protected void configure() 
 	{
+		// this module also serves as POJO dependency for classes that need this config
 		bind(DaoCfg.class).toInstance(this);
 	}
 	
@@ -40,25 +41,11 @@ public class DaoCfg extends AbstractModule
 	 */
 	@Getter private List <MonitorCfg> assPaths = new ArrayList <> ();
 	
+	private OutputCfg output = new DefaultOutputCfg();
 	
-	@Getter(onMethod=@_({@Provides})) private OutputCfg output = new DefaultOutputCfg();
-	
+	@Provides // expose output config to dependency injection
+	public OutputCfg getOutput() { return output; }
 
-//	@Provides
-//	public OutputCfg getOutput() { return output; }
-	
-	
-	private String validate()
-	{
-		if( assPaths.isEmpty())
-			return "No assimilators specified";
-
-		File outDir = new File(output.getOutputDir());
-		if( !outDir.exists())
-			outDir.mkdirs();
-
-		return null;
-	}
 
 	/**
 	 * Load assimilators configuration
@@ -68,8 +55,6 @@ public class DaoCfg extends AbstractModule
 	public static DaoCfg loadConfig() 
 	{
 		log.info("Using configuration path " + Env.etcpath(""));
-		
-		DaoCfg config = null;
 		
 		String cfgFilename = System.getProperty("dao.cfg");
 		if( cfgFilename == null )
@@ -84,6 +69,7 @@ public class DaoCfg extends AbstractModule
 			.create();
 		
 		
+		DaoCfg config = null;
 		try (FileReader reader = new FileReader(configFile))
 		{
 			config = gson.fromJson(reader, DaoCfg.class);
@@ -102,5 +88,21 @@ public class DaoCfg extends AbstractModule
 		}
 		
 		return config;
+	}
+	
+	
+	/**
+	 * Configuration validity check
+	 */
+	private String validate()
+	{
+		if( assPaths == null || assPaths.isEmpty())
+			return "No assimilators specified";
+
+		File outDir = new File(output.getOutputDir());
+		if( !outDir.exists())
+			outDir.mkdirs();
+
+		return null;
 	}
 }

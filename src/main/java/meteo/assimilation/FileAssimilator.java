@@ -14,7 +14,7 @@ public interface FileAssimilator
 	public String getType();
 	
 	/**
-	 * Some custom configuration can be passed here
+	 * Place to configure the assimilator and load heavy resources
 	 * @param cfg
 	 */
 	public void init(FileAssimilatorCfg cfg);

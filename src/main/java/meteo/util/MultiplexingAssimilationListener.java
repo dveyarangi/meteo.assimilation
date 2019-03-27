@@ -1,8 +1,11 @@
-package meteo.assimilation;
+package meteo.util;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import meteo.assimilation.AssListener;
+import meteo.assimilation.AssOutcome;
 
 public class MultiplexingAssimilationListener implements AssListener 
 {
