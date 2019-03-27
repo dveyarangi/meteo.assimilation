@@ -42,9 +42,10 @@ public class FolderMonitor
 	
 	/**
 	 * 
-	 * @param pathsCfg
+	 * @param monitorCfg 
 	 * 
 	 * @param assimilator - files processing module
+	 * @param 
 	 */
 	public FolderMonitor(
 			MonitorCfg monitorCfg, 
@@ -167,6 +168,7 @@ public class FolderMonitor
 		
 		return true;
 	}
+	
 	/**
 	 * Handle files that are fully arrived and are ready to be assimilated
 	 * @param inputFiles

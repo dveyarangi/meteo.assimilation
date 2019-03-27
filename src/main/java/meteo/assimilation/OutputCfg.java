@@ -1,8 +1,6 @@
 package meteo.assimilation;
 
-import lombok.Getter;
-
-public class OutputCfg 
+public interface OutputCfg 
 {
-	@Getter private String outputDir;
+	String getOutputDir();
 }

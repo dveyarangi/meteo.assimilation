@@ -41,8 +41,9 @@ public class DaoCfg extends AbstractModule
 	@Getter private List <MonitorCfg> assPaths = new ArrayList <> ();
 	
 	
-	@Getter(onMethod=@_({@Provides})) private OutputCfg output = new OutputCfg();
+	@Getter(onMethod=@_({@Provides})) private OutputCfg output = new DefaultOutputCfg();
 	
+
 //	@Provides
 //	public OutputCfg getOutput() { return output; }
 	
@@ -75,6 +76,7 @@ public class DaoCfg extends AbstractModule
 		Gson gson = new GsonBuilder()
 			// needed to load FormatAssimilatorCfg implementations from json:
 			.registerTypeAdapter(FileAssimilatorCfg.class, new JsonInterfaceAdapter<>())
+			.registerTypeAdapter(OutputCfg.class, new JsonInterfaceAdapter<>())
 			.create();
 		
 		
