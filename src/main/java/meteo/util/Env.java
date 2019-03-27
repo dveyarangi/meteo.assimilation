@@ -102,4 +102,17 @@ public class Env
 	{
 		return String.format("v%s.%s.b%s", major, minor, build);
 	}
+
+	/**
+	 * @param ms sleep duration
+	 * @return should interrupt caller
+	 */
+	public static boolean sleep(long ms) 
+	{
+		try {
+			Thread.sleep(ms);
+			return true;
+		} 
+		catch (InterruptedException e) { return false; }
+	}
 }

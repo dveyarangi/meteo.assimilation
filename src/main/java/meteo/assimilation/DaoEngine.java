@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -69,12 +70,11 @@ public class DaoEngine
 
 		//runEngine( createMonitors ( createApplication ( loadConfig() ) ) );
 	}
-	
-	public void stop() { this.isAlive = false; }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	private static final long INPUT_MONITORING_INVERAL = 1000;
+	private static final long INPUT_MONITORING_INTERVAL = 1000;
+	
 	private volatile boolean isAlive = true;
 	
 	/**
@@ -86,42 +86,41 @@ public class DaoEngine
 		// TODO: throttle monitoring errors on constant monitor failures
 		log.info("Server has started.");
 		
-		for(FolderMonitor monitor : this.monitors )
-			monitor.init();
-			
+		this.monitors.forEach(FolderMonitor::init);
+		
 		while( isAlive )
 		{
 			// update all registered monitors:
-			for(FolderMonitor monitor : this.monitors )
-				monitor.update();
-			
-			try {
-				Thread.sleep(INPUT_MONITORING_INVERAL);
-			} 
-			catch (InterruptedException e) { break; }
+			this.monitors.forEach(FolderMonitor::update);
+
+			isAlive |= Env.sleep(INPUT_MONITORING_INTERVAL);
 		}
 		
-		for(FolderMonitor monitor : this.monitors )
-			monitor.close();
+		this.monitors.forEach(FolderMonitor::close);		
 		
 		log.info("Server has stopped.");
-		isAlive = false;
 	}
+	
+	public void stop() { this.isAlive = false; }
 
 	/**
 	 * Create format assimilators basing on provided configuration
 	 * @param config
 	 * @return
 	 */
-
 	private List<FolderMonitor> createMonitors( Injector injector ) 
 	{
 		
-		DaoCfg config = injector.getInstance( DaoCfg.class );
-		
-		AssListener listener = injector.getInstance(AssListener.class);
-		
 		List <FolderMonitor> monitors = new ArrayList <> ();
+		
+		AssListener listener = null;
+		try {
+			listener = injector.getInstance(AssListener.class);
+		}
+		catch(ConfigurationException e) { log.debug("No assimilation listener registered.");}
+		
+		
+		DaoCfg config = injector.getInstance( DaoCfg.class );
 		
 		for(MonitorCfg pathCfg : config.getAssPaths())
 		{
@@ -156,9 +155,14 @@ public class DaoEngine
 	private Injector createApplication(final DaoCfg config, final AbstractModule ... modules ) 
 	{
 		List <AbstractModule> allModules = new ArrayList <> ();
+		
 		allModules.add(config);
+		
 		allModules.addAll(Arrays.asList(modules));
+		
 		Injector injector = Guice.createInjector( allModules );
+		
+		
 		return injector;
 	}
 
