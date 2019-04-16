@@ -11,7 +11,7 @@ public class DaoBanner
 	
 	public static final String VERSION_MAJOR = "1";
 	public static final String VERSION_MINOR = "00";
-	public static final String BUILD_NUMBER = Env.loadBuildNumber("tao.build.number");
+	public static final String BUILD_NUMBER = Env.loadBuildNumber("dao.build.number");
 	public static final String DAO_FULL_VERSION = Env.toVersionStr(VERSION_MAJOR, VERSION_MINOR, BUILD_NUMBER); 
 	
 	public static void printBanner(String appName, String appVersion, PrintStream out) 
