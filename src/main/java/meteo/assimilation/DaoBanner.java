@@ -16,12 +16,13 @@ public class DaoBanner
 	
 	public static void printBanner(String appName, String appVersion, PrintStream out) 
 	{
-		out.println("                                                                   ");
-		out.println("     .dP^^88b_                                                     ");
-		out.println("    d^   d88^8b       DAO  Engine       " + appName);
-		out.println("   {8    Y88a8B}      -----------       -----------");
-		out.println("    Y. a  )888P       " + DAO_FULL_VERSION + "       " + appVersion);
-		out.println("     \"b..a88P\"                                                     ");
-		out.println("                                                                   ");
+		out.println("                                                                                   ");
+		out.println("                                                                                   ");
+		out.println("                     .dP^^88b_                                                     ");
+		out.println("   DAO Engine       d^   d88^8b       " + appName);
+		out.println("   ----------      {8    Y88a8B}      ----------");
+		out.println("   "+DAO_FULL_VERSION+"       Y. a  )888P       " + appVersion);
+		out.println("                     \"b..a88P\"                                                     ");
+		out.println("                                                                                    ");
 	}
 }

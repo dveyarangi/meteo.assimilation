@@ -100,7 +100,7 @@ public class Env
 	
 	public static String toVersionStr(String major, String minor, String build)
 	{
-		return String.format("v%s.%s.b%s", major, minor, build);
+		return String.format("%s.%s.b%s", major, minor, build);
 	}
 
 	/**
