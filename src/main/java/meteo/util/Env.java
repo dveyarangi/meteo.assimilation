@@ -16,7 +16,7 @@ public class Env
 	/**
 	 * JVM property name for engine configuration path
 	 */
-	private static final String ETC_PATH_PROPERTY = "etc.dir";
+	public static final String ETC_PATH_PROPERTY = "etc.dir";
 
 	/**
 	 * Default configuration path
@@ -31,7 +31,7 @@ public class Env
 	/**
 	 * JVM property name for cache storage path
 	 */
-	private static final String CACHE_PATH_PROPERTY = "cache.dir";
+	public static final String CACHE_PATH_PROPERTY = "cache.dir";
 	/**
 	 * Default configuration cache
 	 */
@@ -105,7 +105,7 @@ public class Env
 
 	/**
 	 * @param ms sleep duration
-	 * @return should interrupt caller
+	 * @return isAlive/should interrupt caller
 	 */
 	public static boolean sleep(long ms) 
 	{

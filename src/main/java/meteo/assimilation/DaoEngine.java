@@ -1,6 +1,5 @@
 package meteo.assimilation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,34 +14,52 @@ import lombok.extern.slf4j.Slf4j;
 import meteo.util.Env;
 
 /**
- * Main class for Data Assimilation Operations engine
+ * <p>
+ * Main class for Data Assimilation Operations engine.
+ * <p>
+ * The engine monitors folders and feeds files arriving to those folders into
+ * associated {@link FileAssimilator} instances.
+ * <p>
+ * The assimilators are defined by {@link DaoCfg} (located at folder, 
+ * defined by {@link Env#ETC_PATH_PROPERTY} JVM property) 
+ * 
+ * <p>
+ * * use {@link #go()} method to start the engine.
  */
 @Slf4j
 public class DaoEngine 
 {
-
 	
 	/**
-	 * Self-sufficient main to run without the Spring Boot context
-	 * @param args
+	 * Start the engine
 	 */
-	public static void main( String [] args )
+	public static DaoEngine go()
 	{
+		
 		/////////////////////////////////////////////////////
-		// show logo and version
-		printBanner("Application", DAO_FULL_VERSION, System.out);
+		// prepare the engine
+		DaoEngine engine = new DaoEngine();
 		
 		/////////////////////////////////////////////////////
 		// start the engine
-		DaoEngine engine = new DaoEngine();
-		
 		engine.start();
+		
+		return engine;
 	}
 	
+	/**
+	 * Engine configuration
+	 */
 	@Getter DaoCfg config;
 	
+	/**
+	 * Engine dependency graph provider
+	 */
 	@Getter Injector injector;
 	
+	/**
+	 * Folder monitors
+	 */
 	@Getter List <FolderMonitor> monitors;
 
 	/**
@@ -50,6 +67,7 @@ public class DaoEngine
 	 */
 	public void start(AbstractModule ... modules)
 	{
+		
 		//////////////////////////////////////////////////////////////
 		// load configuration
 		config = DaoCfg.loadConfig();
@@ -107,8 +125,6 @@ public class DaoEngine
 		log.info("Server has stopped.");
 	}
 	
-	public void stop() { this.isAlive = false; }
-
 	/**
 	 * Create format assimilators basing on provided configuration
 	 * @param config
@@ -125,24 +141,12 @@ public class DaoEngine
 		}
 		catch(ConfigurationException e) { log.debug("No assimilation listener registered."); }
 		
-		
 		DaoCfg config = injector.getInstance( DaoCfg.class );
 		
 		for(MonitorCfg pathCfg : config.getAssPaths())
 		{
 			// instantiate and initialize configured assimilator:
-			
-			FileAssimilator assimilator;
-			try {
-				@SuppressWarnings("unchecked")
-				Class<FileAssimilator> assClass = (Class<FileAssimilator>) Class.forName( pathCfg.getAssimilatorClass() );
-				assimilator = injector.getInstance(assClass);
-			} 
-			catch (ClassNotFoundException x) 
-			{
-				log.error("Failed to instantiate assimilator type " +  pathCfg.getAssimilatorClass() , x);
-				throw new RuntimeException(x);
-			}
+			FileAssimilator assimilator = injector.getInstance( pathCfg.getAssimilatorClass() );
 			
 			// create input folder monitoring helper:
 			FolderMonitor monitor = new FolderMonitor( pathCfg, assimilator, listener );
@@ -156,39 +160,25 @@ public class DaoEngine
 	
 	/**
 	 * Create Guice injector defining the application dependencies graph
+	 * @param config - configuration module
+	 * @param modules list of optional modules to be provided by application using the engine
 	 * @return
 	 */
 	private Injector createApplication(final DaoCfg config, final AbstractModule ... modules ) 
 	{
 		List <AbstractModule> allModules = new ArrayList <> ();
 		
+		// configuration module (this tricky bastard injects itself as singleton)
 		allModules.add(config);
 		
 		allModules.addAll(Arrays.asList(modules));
 		
-		Injector injector = Guice.createInjector( allModules );
-		
-		
-		return injector;
+		return Guice.createInjector( allModules );
 	}
 
+	/**
+	 * Safe stop the engine
+	 */
+	public void stop() { this.isAlive = false; }
 
-	
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	public static final String VERSION_MAJOR = "1";
-	public static final String VERSION_MINOR = "00";
-	public static final String BUILD_NUMBER = Env.loadBuildNumber("tao.build.number");
-	public static final String DAO_FULL_VERSION = Env.toVersionStr(VERSION_MAJOR, VERSION_MINOR, BUILD_NUMBER); 
-	
-	public static void printBanner(String appName, String appVersion, PrintStream out) 
-	{
-		out.println("                                                                   ");
-		out.println("     .dP^^88b_                                                     ");
-		out.println("    d^   d88^8b       DAO  Engine       " + appName);
-		out.println("   {8    Y88a8B}      -----------       -----------");
-		out.println("    Y. a  )888P       " + DAO_FULL_VERSION + "       " + appVersion);
-		out.println("     \"b..a88P\"                                                     ");
-		out.println("                                                                   ");
-	}
 }

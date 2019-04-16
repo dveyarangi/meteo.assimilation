@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import meteo.util.Env;
+import meteo.util.JsonClassAdapter;
 import meteo.util.JsonInterfaceAdapter;
 
 /**
@@ -66,6 +67,8 @@ public class DaoCfg extends AbstractModule
 			// needed to load FormatAssimilatorCfg implementations from json:
 			.registerTypeAdapter(FileAssimilatorCfg.class, new JsonInterfaceAdapter<>())
 			.registerTypeAdapter(OutputCfg.class, new JsonInterfaceAdapter<>())
+			// loads Classes
+			.registerTypeAdapter(Class.class, new JsonClassAdapter())
 			.create();
 		
 		
@@ -74,7 +77,7 @@ public class DaoCfg extends AbstractModule
 		{
 			config = gson.fromJson(reader, DaoCfg.class);
 		} 
-		catch (FileNotFoundException e) { log.error("Cannot find file "+ configFile, e); }
+		catch (FileNotFoundException e) { log.error("Cannot find file "+ configFile); }
 		catch (IOException e) { log.error("Failed to read file " + configFile, e); }
 		
 		if( config == null )

@@ -12,7 +12,7 @@ public class MonitorCfg
 	String doneDir;
 	String errorDir;
 	String tempDir;
-	@Getter String assimilatorClass;
+	@Getter Class<? extends FileAssimilator> assimilatorClass;
 	@Getter FileAssimilatorCfg config;
 	
 	
