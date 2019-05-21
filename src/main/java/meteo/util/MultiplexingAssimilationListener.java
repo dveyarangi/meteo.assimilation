@@ -18,4 +18,9 @@ public class MultiplexingAssimilationListener implements AssListener
 		for(int idx = 0; idx < listeners.size(); idx ++)
 			listeners.get(idx).fileAssimilated(file, type, outcome);
 	}
+	@Override
+	public void assimilationFailed(File file, String type, Throwable error) {
+		for(int idx = 0; idx < listeners.size(); idx ++)
+			listeners.get(idx).assimilationFailed(file, type, error);
+	}
 }
