@@ -215,12 +215,16 @@ public class FolderMonitor
 			catch( Exception e ) {
 				log.error("Unexected server error while parsing " + file.getName(), e);
 				outcome = AssOutcome.ERROR;
-				listener.assimilationFailed(file, assimilator.getType(), e);
+				try {
+					listener.assimilationFailed(file, assimilator.getType(), e);
+				} catch(Exception lisx) { log.error("Listener failure", lisx); } 
 				// no hasErrors = true here, getting here means parser bug
 			}
 			
 			if( listener != null )
-				listener.fileAssimilated(file, assimilator.getType(), outcome);
+				try {
+					listener.fileAssimilated(file, assimilator.getType(), outcome);
+				} catch(Exception lisx) { log.error("Listener failure", lisx); } 
 
 			
 			/////////////////////////////////////////////////////////////
