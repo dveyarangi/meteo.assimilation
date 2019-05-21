@@ -1,11 +1,15 @@
 package meteo.util;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.Properties;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import meteo.assimilation.DaoEngine;
 
 /**
  * Bootstrap environment
@@ -85,19 +89,11 @@ public class Env
 		return cacheFile.getAbsoluteFile() + "/" + subpath;
 	}
 	
-	public static String loadBuildNumber(String buildNumberFilename)
+	public static BuildProps loadBuildProps(String buildNumberFilename, String versionMajor, String versionMinor)
 	{
-		try {
-			Properties props = new Properties();
-			props.load( DaoEngine.class.getClassLoader().getResourceAsStream(buildNumberFilename) );
-			return String.format("%04d", Integer.parseInt(props.getProperty("build.number", "????")));
-		} 
-		catch (Exception e) 
-		{
-			return "????"; 
-		}
+		return new BuildProps(buildNumberFilename, versionMajor, versionMinor);
 	}
-	
+
 	public static String toVersionStr(String major, String minor, String build)
 	{
 		return String.format("%s.%s.b%s", major, minor, build);
@@ -114,5 +110,38 @@ public class Env
 			return true;
 		} 
 		catch (InterruptedException e) { return false; }
+	}
+	
+	public static class BuildProps
+	{
+		@Getter String timestamp;
+		
+		@Getter String number;
+		
+		@Getter String version;
+		
+		public BuildProps(String buildNumberFilename, String versionMajor, String versionMinor)
+		{
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(Env.class.getClassLoader().getResourceAsStream(buildNumberFilename))))
+			{
+				reader.readLine();
+				String rawTimestampLine = reader.readLine().substring(1);
+				
+				timestamp = PRESENTATION_FMT.format(BUILDFILE_FMT.parse(rawTimestampLine));
+				
+				String rawNumberLine = reader.readLine();
+				number = String.format("%04d", Integer.parseInt(rawNumberLine.split("=")[1]));
+				
+				version = Env.toVersionStr(versionMajor, versionMinor, number);
+			
+			} catch (IOException e) {
+				log.warn("Failed to read build properties");
+			} catch (ParseException e) {
+				log.warn("Failed to read build properties");
+			}
+		}
+		//Tue May 14 08:46:16 UTC 2019
+		private static SimpleDateFormat BUILDFILE_FMT = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		private static SimpleDateFormat PRESENTATION_FMT = new SimpleDateFormat("dd-MM-yyyy");
 	}
 }
