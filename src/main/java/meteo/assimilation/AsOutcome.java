@@ -3,7 +3,7 @@ package meteo.assimilation;
 /**
  * Assimilation outcome
  */
-public enum AssOutcome 
+public enum AsOutcome 
 {
 	SUCCESS, // processed successfully
 	ERROR, // error

@@ -25,9 +25,9 @@ public class MockAssimilator implements FileAssimilator
 	}
 
 	@Override
-	public AssOutcome assimilate(File file) throws IOException {
+	public AsOutcome assimilate(File file) throws IOException {
 		log.info("Assimilated file '" + file.getName() + "'");
-		return AssOutcome.SUCCESS;
+		return AsOutcome.SUCCESS;
 	}
 
 }

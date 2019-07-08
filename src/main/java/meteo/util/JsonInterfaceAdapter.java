@@ -10,7 +10,7 @@ import com.google.gson.JsonParseException;
 
 public class JsonInterfaceAdapter <T> implements JsonDeserializer <T>
 {
-	private static final String CLASSNAME = "className";
+	public static final String CLASSNAME = "className";
 
 	@SuppressWarnings("unchecked")
 	@Override

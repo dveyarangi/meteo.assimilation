@@ -5,5 +5,5 @@ package meteo.assimilation;
  */
 public interface FileAssimilatorCfg 
 {
-
+	Class<? extends FileAssimilator> getAssimilatorClass();
 }

@@ -33,5 +33,5 @@ public interface FileAssimilator
 	 * @return hasErrors
 	 * @throws IOException
 	 */
-	public AssOutcome assimilate(File file)  throws IOException;
+	public AsOutcome assimilate(File file)  throws IOException;
 }

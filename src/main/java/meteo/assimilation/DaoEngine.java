@@ -89,7 +89,7 @@ public class DaoEngine
 		// tirelessly monitor input folders:
 		
 		Runnable engineHeart = new Runnable() { @Override public void run()  { runEngine(); } };
-		new Thread(engineHeart, "tao-engine").start();
+		new Thread(engineHeart, "dao-engine").start();
 		
 		// stop main loop on kill signal
 		Runtime.getRuntime().addShutdownHook(new Thread( ()->stop() ));
@@ -108,7 +108,7 @@ public class DaoEngine
 	private void runEngine()
 	{
 		// TODO: throttle monitoring errors on constant monitor failures
-		log.info("Server has started.");
+		log.info("DAO engine has started.");
 		
 		this.monitors.forEach(FolderMonitor::init);
 		
@@ -122,7 +122,7 @@ public class DaoEngine
 		
 		this.monitors.forEach(FolderMonitor::close);		
 		
-		log.info("Server has stopped.");
+		log.info("DAO engine has stopped.");
 	}
 	
 	/**
@@ -135,9 +135,9 @@ public class DaoEngine
 		
 		List <FolderMonitor> monitors = new ArrayList <> ();
 		
-		AssListener listener = null;
+		AsListener listener = null;
 		try {
-			listener = injector.getInstance(AssListener.class);
+			listener = injector.getInstance(AsListener.class);
 		}
 		catch(ConfigurationException e) { log.debug("No assimilation listener registered."); }
 		
@@ -146,7 +146,7 @@ public class DaoEngine
 		for(MonitorCfg pathCfg : config.getAssPaths())
 		{
 			// instantiate and initialize configured assimilator:
-			FileAssimilator assimilator = injector.getInstance( pathCfg.getAssimilatorClass() );
+			FileAssimilator assimilator = injector.getInstance( pathCfg.getConfig().getAssimilatorClass() );
 			
 			// create input folder monitoring helper:
 			FolderMonitor monitor = new FolderMonitor( pathCfg, assimilator, listener );

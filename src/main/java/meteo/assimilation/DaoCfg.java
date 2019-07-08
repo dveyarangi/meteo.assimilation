@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import meteo.assimilation.util.JsonAsCfgAdapter;
 import meteo.util.Env;
 import meteo.util.JsonClassAdapter;
 import meteo.util.JsonInterfaceAdapter;
@@ -59,13 +60,13 @@ public class DaoCfg extends AbstractModule
 		
 		String cfgFilename = System.getProperty("dao.cfg");
 		if( cfgFilename == null )
-			cfgFilename = "dao.conf";
+			cfgFilename = "dao.cfg";
 		
 		String configFile = Env.etcpath( cfgFilename );
 		
 		Gson gson = new GsonBuilder()
 			// needed to load FormatAssimilatorCfg implementations from json:
-			.registerTypeAdapter(FileAssimilatorCfg.class, new JsonInterfaceAdapter<>())
+			.registerTypeAdapter(FileAssimilatorCfg.class, new JsonAsCfgAdapter())
 			.registerTypeAdapter(OutputCfg.class, new JsonInterfaceAdapter<>())
 			// loads Classes
 			.registerTypeAdapter(Class.class, new JsonClassAdapter())

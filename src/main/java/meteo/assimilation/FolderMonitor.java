@@ -26,7 +26,7 @@ public class FolderMonitor
 	 */
 	private final FileAssimilator assimilator;
 	
-	private final AssListener listener;
+	private final AsListener listener;
 
 	/**
 	 * List of files in the input folder and their statuses
@@ -51,7 +51,7 @@ public class FolderMonitor
 	public FolderMonitor(
 			MonitorCfg monitorCfg, 
 			FileAssimilator assimilator,
-			AssListener listener)
+			AsListener listener)
 	{
 		this.monitorCfg = monitorCfg;
 		this.assimilator = assimilator;
@@ -69,13 +69,6 @@ public class FolderMonitor
 		this.doneFolder = monitorCfg.getDoneDir();
 		this.errorFolder = monitorCfg.getErrorDir();
 		
-		log.info(String.format("Monitoring %10s - %s", 
-				assimilator.getType().toUpperCase(), monitorCfg.getInputDir().getAbsolutePath() ) );
-		if( monitorCfg.getDoneDir() == null )
-			log.debug("No done folder specified for {} files, assimilated files will be deleted", assimilator.getType().toUpperCase() );
-		
-		if( monitorCfg.getErrorDir() == null )
-			log.debug("No error folder specified for {} files, unhandleable files will be deleted", assimilator.getType().toUpperCase() );
 	}
 
 	/**
@@ -86,11 +79,24 @@ public class FolderMonitor
 	{
 		assimilator.init(monitorCfg.getConfig());
 		
+		validateAssimilator(assimilator);
+		
 		log.trace("Started listing files in {}...", tempFolder.getAbsolutePath());
 		List <File> tempFiles = Arrays.asList( tempFolder.listFiles() );
 		// process the files:
 		assimilateFiles( tempFiles );
 		log.trace("Finished processing {}", tempFolder.getAbsolutePath() );
+	}
+
+	private void validateAssimilator( FileAssimilator assimilator2 )
+	{
+		log.info(String.format("Monitoring %10s - %s", 
+				assimilator.getType().toUpperCase(), monitorCfg.getInputDir().getAbsolutePath() ) );
+		if( monitorCfg.getDoneDir() == null )
+			log.debug("No done folder specified for {} files, assimilated files will be deleted", assimilator.getType().toUpperCase() );
+		
+		if( monitorCfg.getErrorDir() == null )
+			log.debug("No error folder specified for {} files, unhandleable files will be deleted", assimilator.getType().toUpperCase() );
 	}
 
 	/**
@@ -203,21 +209,22 @@ public class FolderMonitor
 			
 			/////////////////////////////////////////////////////////////
 			// assimilating the file:
-			AssOutcome outcome = AssOutcome.DROP;
+			AsOutcome outcome = AsOutcome.DROP;
 			try
 			{
 				outcome = assimilator.assimilate( processedFile );
 			} 
 			catch( IOException e ) { 
 				log.error("IO error reading " + file.getName(), e);
-				outcome = AssOutcome.ERROR;
+				outcome = AsOutcome.ERROR;
 			} 
 			catch( Exception e ) {
 				log.error("Unexected server error while parsing " + file.getName(), e);
-				outcome = AssOutcome.ERROR;
-				try {
-					listener.assimilationFailed(file, assimilator.getType(), e);
-				} catch(Exception lisx) { log.error("Listener failure", lisx); } 
+				outcome = AsOutcome.ERROR;
+				if( listener != null )
+					try {
+						listener.assimilationFailed(file, assimilator.getType(), e);
+					} catch(Exception lisx) { log.error("Listener failure", lisx); } 
 				// no hasErrors = true here, getting here means parser bug
 			}
 			
@@ -288,7 +295,7 @@ public class FolderMonitor
 			fileQueue.remove( file );
 			
 			if(listener != null )
-				listener.fileAssimilated(file, assimilator.getType(), AssOutcome.ERROR );
+				listener.fileAssimilated(file, assimilator.getType(), AsOutcome.ERROR );
 		}
 	}
 
