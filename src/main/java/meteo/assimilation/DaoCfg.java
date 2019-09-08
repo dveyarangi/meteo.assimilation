@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -79,6 +80,7 @@ public class DaoCfg extends AbstractModule
 			config = gson.fromJson(reader, DaoCfg.class);
 		} 
 		catch (FileNotFoundException e) { log.error("Cannot find file "+ configFile); }
+		catch (JsonSyntaxException e) { log.error("Error in cofiguration file " + configFile + ": " + e.getMessage()); }
 		catch (IOException e) { log.error("Failed to read file " + configFile, e); }
 		
 		if( config == null )

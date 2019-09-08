@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Implementation-Title: meteo.assimilation
+Implementation-Version: 1.0
+

@@ -1,0 +1,64 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+project.ext.projectName = 'meteo.assimilation'
+
+
+repositories {
+	mavenCentral()   
+	maven { url "http://mvnrepository.com/artifact" }
+	maven { url "http://download.osgeo.org/webdav/geotools/" }
+ 	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }	
+	maven { url "https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/" }
+	flatDir {
+		dirs 'lib'
+	}
+}
+
+configurations.all {
+    exclude group: 'javax.media'
+}
+
+dependencies {
+
+    compile "aopalliance:aopalliance:1.0"
+    compile "javax.inject:javax.inject:1"
+    compile "org.slf4j:slf4j-api:1.7.25"
+    compile "ch.qos.logback:logback-classic:1.1.7"
+	compile "ch.qos.logback:logback-core:1.1.7"
+    compile "org.projectlombok:lombok:1.16.2"
+    
+ 	compile "com.google.inject:guice:4.1.0"
+    compile "com.google.guava:guava:19.0"
+    compile "com.google.code.gson:gson:2.7"
+    //compile "com.google.code.findbugs:annotations:2.0.1"
+    
+    compile "org.reflections:reflections:0.9.10"
+    compile "org.apache.commons:commons-lang3:3.1"
+    compile "commons-io:commons-io:2.4"
+    
+    testCompile "junit:junit:4.10"
+
+}
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': projectName,
+                   'Implementation-Version': version
+    }
+}
+
+
+eclipse {
+	project {
+  		natures 'org.springsource.ide.eclipse.gradle.core.nature'
+  		name = projectName
+	}
+}
+
+
