@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -199,6 +200,7 @@ public class FolderMonitor
 				try {
 					FileUtils.moveFile(file, processedFile);
 				}
+				catch( FileExistsException e ) { log.debug("File already exists at target folder. Failed to move file {} to folder {} ", file.getName(), processedFile.getAbsoluteFile());}
 				catch( FileNotFoundException e ) { 
 					continue; // TODO: file removed, no need to warn? 
 				}
@@ -276,8 +278,10 @@ public class FolderMonitor
 			FileUtils.moveFile( sourceFile, targetFile );
 			log.trace( "File {} moved to folder {}", targetFile.getName(), targetDir.getAbsoluteFile() ) ;
 		}
+		catch( FileExistsException e ) { log.debug("File already exists at target folder. Failed to move file {} to folder {} ", targetFile.getName(), targetDir.getAbsoluteFile());}
 		catch( IOException e ) { 
 			log.warn("Failed to move file {} to folder {} ", targetFile.getName(), targetDir.getAbsoluteFile(), e);}
+		
 	}
 
 	@Override
