@@ -57,13 +57,13 @@ public class DaoCfg extends AbstractModule
 	 */
 	public static DaoCfg loadConfig() 
 	{
-		log.info("Using configuration path " + Env.etcpath(""));
 		
 		String cfgFilename = System.getProperty("dao.cfg");
 		if( cfgFilename == null )
 			cfgFilename = "dao.cfg";
 		
 		String configFile = Env.etcpath( cfgFilename );
+		log.debug("Using configuration file {}", configFile);
 		
 		Gson gson = new GsonBuilder()
 			// needed to load FormatAssimilatorCfg implementations from json:

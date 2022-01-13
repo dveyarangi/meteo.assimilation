@@ -42,6 +42,9 @@ public class AsList implements FileAssimilator
 			throw new IllegalArgumentException("No child assimilators defined");
 		for(FileAssimilatorCfg asCfg : this.cfg.getConfigs())
 		{
+			if( cfg == null )
+				continue; // can happen when there is a redundant comma in cfg json
+			
 			FileAssimilator child = injector.getInstance(asCfg.getAssimilatorClass());
 			
 			if(this.sampleAssimilator == null )

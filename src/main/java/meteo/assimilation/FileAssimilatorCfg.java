@@ -1,9 +1,13 @@
 package meteo.assimilation;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Base interface for file assimilators configuration 
  */
-public interface FileAssimilatorCfg 
+public abstract class FileAssimilatorCfg 
 {
-	Class<? extends FileAssimilator> getAssimilatorClass();
+	@Getter @Setter String cfgFile;
+	public abstract Class<? extends FileAssimilator> getAssimilatorClass();
 }

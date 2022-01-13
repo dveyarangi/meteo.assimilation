@@ -25,7 +25,7 @@ public interface FileAssimilator
 	 * @return
 	 * @throws IOException
 	 */
-	public boolean canAssimilate(File file) throws IOException;
+	public default boolean canAssimilate(File file) throws IOException { return true; }
 	
 	/**
 	 * Process the file

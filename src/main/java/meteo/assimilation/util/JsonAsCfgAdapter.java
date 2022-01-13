@@ -37,7 +37,9 @@ public class JsonAsCfgAdapter implements JsonDeserializer <FileAssimilatorCfg>
 			String fullPath = Env.etcpath(filenameElement.getAsString());
 			try (FileReader reader = new FileReader(fullPath))
 			{
-				return gson.fromJson(reader, FileAssimilatorCfg.class);
+				FileAssimilatorCfg cfg = gson.fromJson(reader, FileAssimilatorCfg.class);
+				cfg.setCfgFile(fullPath);
+				return cfg;
 			} 
 			catch( IOException e )
 			{

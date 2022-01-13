@@ -69,7 +69,7 @@ public class Env
 		
 		cacheFile = new File( cachePath );
 		
-		log.info("Using cache path " +  cacheFile.getAbsolutePath());
+		log.debug("Using cache path " +  cacheFile.getAbsolutePath() + ". Can be modified by setting " + CACHE_PATH_PROPERTY);
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}

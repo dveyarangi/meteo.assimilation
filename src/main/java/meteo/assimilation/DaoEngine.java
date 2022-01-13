@@ -107,10 +107,14 @@ public class DaoEngine
 	 */
 	private void runEngine()
 	{
-		// TODO: throttle monitoring errors on constant monitor failures
-		log.info("DAO engine has started.");
 		
 		this.monitors.forEach(FolderMonitor::init);
+		
+		log.info("=======================");
+		log.info("DAO engine has started.");
+		log.info("=======================");
+		
+		// TODO: throttle monitoring errors on constant monitor failures
 		
 		while( isAlive )
 		{
@@ -122,7 +126,9 @@ public class DaoEngine
 		
 		this.monitors.forEach(FolderMonitor::close);		
 		
+		log.info("=======================");
 		log.info("DAO engine has stopped.");
+		log.info("=======================");
 	}
 	
 	/**
@@ -139,7 +145,7 @@ public class DaoEngine
 		try {
 			listener = injector.getInstance(AsListener.class);
 		}
-		catch(ConfigurationException e) { log.debug("No assimilation listener registered."); }
+		catch(ConfigurationException e) { log.trace("No assimilation listener registered."); }
 		
 		DaoCfg config = injector.getInstance( DaoCfg.class );
 		

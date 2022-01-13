@@ -1,6 +1,6 @@
 package meteo.assimilation;
 
-public class MockAssimilatorCfg implements FileAssimilatorCfg
+public class MockAssimilatorCfg extends FileAssimilatorCfg
 {
 
 	@Override
